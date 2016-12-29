@@ -1,12 +1,18 @@
+//jshint esversion: 6
+
 const net = require('net');
 
-let server = net.createServer((socket) => {
+let messageCount = 0;
+let server = net.createServer((server) => {
 
-  socket.on('end', () => {
-    socket.end('The message was received but was not processed.\n');
+  server.on('data', (chunk) => {
+    messageCount++;
+    console.log(`Client: ${chunk}`);
+    process.stdin.pipe(server);
+
   });
+});
 
-  // start the flow of data, discarding it.
-  socket.resume();
-
-}).listen(8888, '0.0.0.0');
+server.listen(8888, '0.0.0.0',  () => {
+  console.log('opened sever on ', server.address());
+});
